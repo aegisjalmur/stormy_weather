@@ -1,41 +1,42 @@
 import { useState } from 'react'
 import './App.css'
+import WeatherItem from './components/WeatherItem'
+import SearchItem from './components/SearchItem'
 
 function App() {
   const [locationName, setLocationName] = useState("")
-  const [coordinates, setCoordinates] = useState({})
-  const [weatherData, setWeatherData] = useState([])
+  const [weatherData, setWeatherData] = useState("")
   const apiKey = "21005c691121a25e5407d92ff66a0f2e";
 
   const apiRequest = (name) => {
     fetch (`http://api.openweathermap.org/geo/1.0/direct?q=${name}&appid=${apiKey}`)
     .then((res) => res.json())
     .then((data) => {
-      setCoordinates({latitude: data[0].lat, longitude: data[0].lon})
+            setLocationName("Location not found");
+      if(data.length !== 0){
+      setLocationName(data[0].name)
+      fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${data[0].lat}&lon=${data[0].lon}&appid=${apiKey}&units=metric`
+      )
+      .then((res) => res.json())
+      .then((data) => {
+        if(data.cod === 200){
+          console.log(data)
+          setWeatherData(data);
+        }
+      })
+      return
+      }
+
     })
   }
 
   return (
     <>
-      <header>
-        <p>Stormy Weather</p>
-        <input
-          type="text"
-          placeholder="enter name or Zip code"
-          id=""
-          onChange={(e) => {
-            setLocationName(e.target.value)
-          }}
-        />
-        <button onClick={() => apiRequest(locationName)}>Search</button>
-      </header>
-      <main>
-        <h2>Location Name</h2>
-        <div>
-          <h3>Weather Now</h3>
-          <p>Temperature</p>
-        </div>
-      </main>
+      <SearchItem 
+        apiRequest={apiRequest} 
+      />
+      <WeatherItem weatherData={weatherData} locationName ={locationName}/>
     </>
   );
 }
