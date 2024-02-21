@@ -6,7 +6,7 @@ import SearchItem from './components/SearchItem'
 function App() {
   const [locationName, setLocationName] = useState("")
   const [weatherData, setWeatherData] = useState("")
-  const apiKey = "21005c691121a25e5407d92ff66a0f2e";
+  const apiKey = "";
 
   const apiRequest = (name) => {
     fetch (`http://api.openweathermap.org/geo/1.0/direct?q=${name}&appid=${apiKey}`)
